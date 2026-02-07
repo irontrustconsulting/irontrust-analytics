@@ -1,0 +1,259 @@
+/* ===========================
+   Theme Variables (Light/Dark)
+   =========================== */
+:root {
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+
+  --color-volume-bar: #3b82f6;        /* blue */
+  --color-risk-bar: #ef4444;          /* red */
+  --color-neutral-graph: #6b7280;     /* gray */
+
+  --kpi-bg: #fafafa;
+  --kpi-border: #e5e7eb;
+
+  --page-bg: #f9fafb;                 /* page background light theme */
+  --section-title-color: #666;        /* section titles on light page */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --card-bg: #0f172a;
+    --card-border: #1f2937;
+    --text-primary: #e5e7eb;
+    --text-secondary: #9ca3af;
+
+    --color-volume-bar: #60a5fa;
+    --color-risk-bar: #f87171;
+    --color-neutral-graph: #9ca3af;
+
+    --kpi-bg: #111827;
+    --kpi-border: #374151;
+
+    --page-bg: #0f172a;                 /* dark page background */
+    --section-title-color: #e5e7eb;    /* section titles on dark page */
+  }
+}
+body {
+  background-color: var(--page-bg);
+}
+
+/* ===========================
+   Page Background & Body
+   =========================== */
+ .dashboard-page {
+  background-color: var(--page-bg);
+  color: var(--text-primary);
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 2rem;
+}
+
+/* ===========================
+   Section Layout
+   =========================== */
+.dashboard-section {
+  margin-bottom: 3rem;
+}
+
+.dashboard-section-title {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--section-title-color);
+}
+
+/* Optional: subtle divider below section title */
+.dashboard-section-title::after {
+  content: "";
+  display: block;
+  height: 1px;
+  background-color: #e5e7eb; /* subtle line for separation */
+  margin-top: 0.5rem;
+}
+
+/* ===========================
+   Grid Layout
+   =========================== */
+.dashboard-grid {
+  display: grid;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.dashboard-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.dashboard-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.dashboard-grid.cols-1 { grid-template-columns: 1fr; }
+
+@media (max-width: 1280px) {
+  .dashboard-grid.cols-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 1024px) {
+  .dashboard-grid.cols-3,
+  .dashboard-grid.cols-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===========================
+   Dashboard Card
+   =========================== */
+.dashboard-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 1rem;
+  overflow: hidden;
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-card-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.dashboard-card-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.dashboard-card-body {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.dashboard-card-body .js-plotly-plot,
+.dashboard-card-body .plotly,
+.dashboard-card-body svg {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ===========================
+   KPI Grid & Cards
+   =========================== */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+/* Base card style */
+.kpi-card {
+  background-color: #fff; /* or match your card background */
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Intent colors */
+.kpi-neutral {
+  border-left: 4px solid #3b82f6; /* blue for neutral/informational */
+}
+
+.kpi-alert {
+  border-left: 4px solid #ef4444; /* red for alerts */
+}
+
+.kpi-warn {
+  border-left: 4px solid #f59e0b; /* amber/yellow for warnings */
+}
+
+.kpi-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+}
+
+.kpi-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.kpi-text {
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kpi-caption {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+  line-height: 1.2;
+}
+
+/* Badges */
+.kpi-badge {
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  vertical-align: middle;
+  border: 1px solid transparent;
+}
+
+.kpi-label .kpi-badge {
+  margin-left: 0.5rem;
+}
+
+.kpi-badge-alert {
+  color: #7a1320;
+  background: #fde2e4;
+  border-color: #f8b4b8;
+}
+
+.kpi-badge-warn {
+  color: #6a3e07;
+  background: #fff3cd;
+  border-color: #ffe08a;
+}
+
+.kpi-badge-neutral {
+  color: #1f2937;
+  background: #e5e7eb;
+  border-color: #d1d5db;
+}
+
+/* ===========================
+   Skeleton Loader
+   =========================== */
+.skeleton {
+  display: block;
+  width: 100%;
+  height: 240px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #eee 25%, #f7f7f7 37%, #eee 63%);
+  background-size: 400% 100%;
+  animation: shine 1.4s ease infinite;
+}
+
+@keyframes shine {
+  0%   { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}

@@ -1,0 +1,35 @@
+
+# libs/ml/pyproject.toml
+[tool.poetry]
+name = "ml"                               # project name (can be 'ml' or 'irontrust-ml')
+version = "0.1.0"
+description = "ML library for Irontrust (training & inference)"
+authors = ["Herbert Maosa"]
+readme = "README.md"
+
+# 👇 Tell Poetry where the importable package 'ml' lives
+packages = [{ include = "ml", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+# Add only what you actually use here; keep it lean if splitting by role:
+# scikit-learn = "^1.5.0"
+# numpy = "^1.26.0"
+# pandas = "^2.2.0"
+# pyarrow = "^16.0.0"
+# torch = "^2.4.0"          # only if you really need it
+# boto3 = "^1.35.0"         # if you load models from S3
+# pydantic = "^2.8.0"       # if you validate configs, IO schemas, etc.
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.0"
+ruff = "^0.7.0"
+black = "^24.8.0"
+mypy = "^1.10.0"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100

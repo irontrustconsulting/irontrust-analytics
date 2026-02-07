@@ -1,0 +1,36 @@
+{
+  "name": "EMR Serverless Dev (Amazon Linux 2023)",
+  "dockerFile": "Dockerfile",
+  "context": "..",
+
+  "workspaceFolder": "/workspace",
+
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind",
+    "source=/home/ubuntu/dev/irontrust-analytics/libs,target=/workspace/libs,type=bind"
+  ],
+
+  "remoteEnv": {
+    "POETRY_VIRTUALENVS_IN_PROJECT": "true",
+    "POETRY_VIRTUALENVS_CREATE": "true",
+    "PYTHONPATH": "/workspace:/workspace/libs"
+  },
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/workspace/.venv/bin/python",
+        "python.analysis.extraPaths": [
+          "/workspace",
+          "/workspace/libs"
+        ]
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  },
+
+  "postCreateCommand": "export PATH=/root/.local/bin:$PATH && poetry env use python3.11"
+}

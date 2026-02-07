@@ -1,0 +1,17 @@
+
+[tool.poetry]
+name = "parsers"
+version = "0.1.0"
+description = "Parsing library for Irontrust (PCAP, SonicWall, etc.)"
+authors = ["Herbert Maosa"]
+packages = [{ include = "parsers", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+scapy = "^2.5.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.0"
+ruff = "^0.7.0"
+black = "^24.8.0"
+mypy = "^1.10.0"

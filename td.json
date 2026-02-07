@@ -1,0 +1,52 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "irontrust-pcap-parser",
+            "image": "168787218840.dkr.ecr.eu-west-2.amazonaws.com/pcap-parser:dev-202601250847",
+            "cpu": 0,
+            "portMappings": [],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "SOURCE_BUCKET",
+                    "value": "log-upload-portal"
+                },
+                {
+                    "name": "OUTPUT_BUCKET",
+                    "value": "irontrust-analytics-bronze"
+                }
+            ],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/Parser",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "eu-west-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        }
+    ],
+    "family": "Parser",
+    "taskRoleArn": "arn:aws:iam::168787218840:role/pcap-parser-task-role",
+    "executionRoleArn": "arn:aws:iam::168787218840:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "volumes": [],
+    "placementConstraints": [],
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "2048",
+    "enableFaultInjection": false
+}

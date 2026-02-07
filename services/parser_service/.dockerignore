@@ -1,0 +1,26 @@
+
+**/__pycache__/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.venv/
+**/*.pyc
+
+# Node/build artifacts
+apps/web/node_modules/
+apps/web/dist/
+apps/web/.vite/
+apps/web/.next/
+
+# Notebooks
+apps/notebooks/.ipynb_checkpoints/
+
+# Data/models
+data/
+**/models/
+*.parquet
+*.csv
+
+# Git
+.git
+.gitignore

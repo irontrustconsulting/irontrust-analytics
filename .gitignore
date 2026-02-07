@@ -1,0 +1,75 @@
+# -----------------------
+# Node / Web
+# -----------------------
+apps/web/node_modules/
+apps/web/dist/
+apps/web/.vite/
+apps/web/*.log
+apps/web/.env
+apps/web/.DS_Store
+
+# -----------------------
+# Python / Poetry / venvs
+# -----------------------
+**/__pycache__/
+**/*.py[cod]
+**/venv/
+**/.venv/
+**/.mypy_cache/
+**/.pytest_cache/
+**/.cache/
+**/*.egg-info/
+**/build/
+**/dist/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+
+# Poetry / pipenv
+**/poetry.lock
+**/pipfile.lock
+
+# -----------------------
+# Data (ignore all raw data)
+# -----------------------
+data/
+apps/notebooks/
+
+# -----------------------
+# Jobs / packaging artifacts
+# -----------------------
+jobs/emr_serverless/packaging/
+jobs/**/build/
+jobs/**/dist/
+jobs/**/.venv/
+
+# -----------------------
+# Misc / OS
+# -----------------------
+*.DS_Store
+*.log
+*.zip
+*.tmp
+*.bak
+*.swp
+
+# -----------------------
+# IDEs
+# -----------------------
+.vscode/
+.idea/
+*.iml
+
+# -----------------------
+# Terraform / Infra
+# -----------------------
+infra/.terraform/
+infra/terraform.tfstate
+infra/terraform.tfstate.*
+infra/.terragrunt-cache/
+
+# -----------------------
+# Optional: keep empty folders with .gitkeep
+# -----------------------
+# (these folders themselves are tracked via .gitkeep)

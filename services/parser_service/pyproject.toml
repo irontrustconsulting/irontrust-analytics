@@ -1,0 +1,27 @@
+
+[tool.poetry]
+name = "parser-service"
+version = "0.1.0"
+description = "Fargate ECS service for PCAP parsing"
+authors = ["Herbert Maosa"]
+packages = [{ include = "parser_service", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+boto3 = "^1.35.0"             # if you read/write to S3
+# Add any other runtime deps the service needs (logging, uvloop if async, etc.)
+
+# Local lib (editable) — points to your parsers lib
+parsers = { path = "../../libs/parsers", develop = true }
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.0"
+ruff = "^0.7.0"
+black = "^24.8.0"
+mypy = "^1.10.0"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100

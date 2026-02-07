@@ -1,0 +1,33 @@
+
+[tool.poetry]
+name = "analytics-core"
+version = "0.1.0"
+description = "Core analytics transforms and utilities for Irontrust"
+authors = ["Herbert Maosa"]
+readme = "README.md"
+
+# 👇 IMPORTANT: link package name analytics_core under src/
+packages = [{ include = "analytics_core", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+# Add heavy deps here if this lib uses them (common):
+# pandas = "^2.2.0"
+# pyarrow = "^16.0.0"
+# numpy = "^1.26.0"
+# boto3 = "^1.35.0"
+pyspark = "^4.1"
+tldextract = ">=5.3.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.0"
+ruff = "^0.7.0"
+black = "^24.8.0"
+mypy = "^1.10.0"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100

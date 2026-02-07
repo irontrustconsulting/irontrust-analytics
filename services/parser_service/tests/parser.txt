@@ -1,0 +1,10 @@
+
+# Option A: specify bucket + key via envs
+docker run --rm \
+  -e SOURCE_BUCKET=log-upload-portal \
+  -e OUTPUT_BUCKET=irontrust-test \
+  -e OBJECT_KEY='tenant-demo-1/uploads/1759823370464_benign_heavy_1.pcap' \
+  -e OUTPUT_PREFIX='bronze/pcap' \
+  -e AWS_REGION=eu-west-2 \
+  -v $HOME/.aws:/home/appuser/.aws:ro \
+  irontrust/parser-service:dev

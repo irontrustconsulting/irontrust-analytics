@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "emr-jobs"
+version = "0.1.0"
+description = "EMR Serverless Jobs for Irontrust Analytics Apps"
+authors = ["Herbert Maosa"]
+readme = "README.md"
+packages = [{ include = "emr_jobs", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+# Note: do NOT pin pyspark here for the test (venv installs 4.x via Dockerfile)
+analytics_core = { path = "../../libs/analytics_core", develop = true }
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.0"
+ruff = "^0.7.0"
+black = "^24.8.0"
+mypy = "^1.10.0"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
