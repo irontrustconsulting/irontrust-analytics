@@ -1,3 +1,5 @@
+type KPIIntent = "neutral" | "warn" | "alert";
+
 type KPICardProps = {
   label: string;
   value: React.ReactNode;
@@ -5,7 +7,7 @@ type KPICardProps = {
   text?: string;
   badge?: React.ReactNode;
   title?: string;
-  intent?: "neutral" | "alert" | "warn"; // new
+  intent?: KPIIntent;
 };
 
 export function KPICard({
@@ -18,7 +20,11 @@ export function KPICard({
   intent = "neutral",
 }: KPICardProps) {
   return (
-    <div className={`kpi-card kpi-${intent}`} role="group" title={title}>
+    <div
+      className={`kpi-card kpi-${intent}`}
+      role="group"
+      title={title}
+    >
       <div className="kpi-label">
         {label}
         {badge}

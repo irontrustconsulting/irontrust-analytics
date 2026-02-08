@@ -162,15 +162,16 @@ body {
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 /* Intent colors */
 .kpi-neutral {
-  border-left: 4px solid #3b82f6; /* blue for neutral/informational */
+  border-left: 3px solid transparent; /* blue for neutral/informational */
 }
 
 .kpi-alert {
-  border-left: 4px solid #ef4444; /* red for alerts */
+  border-left: 3px solid #ef4444; /* red for alerts */
 }
 
 .kpi-warn {
@@ -241,6 +242,23 @@ body {
 }
 
 /* ===========================
+   KPI Groups
+   =========================== */
+
+.kpi-group {
+  margin-bottom: 1.75rem;
+}
+
+.kpi-group-title {
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+/* ===========================
    Skeleton Loader
    =========================== */
 .skeleton {
@@ -257,3 +275,4 @@ body {
   0%   { background-position: 100% 0; }
   100% { background-position: 0 0; }
 }
+

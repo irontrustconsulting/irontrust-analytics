@@ -16,7 +16,7 @@ import { HighEntropyQnamesChart } from "../components/charts/v2/HighEntropyQName
 import { DashboardCard } from "../components/layout/v2/DashboardCard";
 import { DashboardSection } from "../components/layout/v2/DashboardSection";
 import { DashboardGrid } from "../components/layout/v2/DashboardGrid";
-
+import { KPIGroup } from "../components/layout/v2/KPIGroup";
 
 
 import "../components/layout/v2/dashboard.css";
@@ -71,89 +71,85 @@ export default function AnalyticsDashboard({ tenantId, eventDate }: Props) {
       <DashboardHeader tenantId={data?.tenant ?? tenantId} eventDate={data?.event_date ?? eventDate} title="DNS Analytics Dashboard (V1)" />
 
       <DashboardSection title="Overview">
-  {loading ? (
-    <KPIGridSkeleton />
-  ) : (
-    <>
-      {/* Context KPIs */}
-      <div className="kpi-group" style={{ marginBottom: "1.5rem" }}>
-        <KPIGrid ariaLabel="Context KPIs">
-          <KPICard
-            label="Total queries"
-            value={totalQueries.toLocaleString()}
-            caption="Requests observed in the selected window"
-          />
-          <KPICard
-            label="Unique QNAMEs"
-            value={uniqueQnames.toLocaleString()}
-            caption="Distinct queried names"
-          />
-          <KPICard
-            label="Unique Root Domains"
-            value={uniqueRootDomains.toLocaleString()}
-            caption="Distinct eTLD+1 roots"
-          />
-          <KPICard
-            label="Unique Source IPs"
-            value={uniqueSrcIps.toLocaleString()}
-            caption="Clients generating queries"
-          />
-        </KPIGrid>
-      </div>
+      {loading ? (
+        <KPIGridSkeleton />
+      ) : (
+        <>
+          <KPIGroup title="Risk Indicators">
+            <KPIGrid ariaLabel="Risk KPIs">
+              <KPICard
+                label="High-entropy Queries"
+                value={highEntropyQueryCount.toLocaleString()}
+                caption={`Share: ${(highEntropyQueryRatio * 100).toFixed(1)}%`}
+                intent={alertFlags.high_entropy ? "alert" : "neutral"}
+              />
+              <KPICard
+                label="Max QNAME Entropy"
+                value={maxQNameEntropy.toFixed(2)}
+                text={maxEntropyQName}
+              />
+              <KPICard
+                label="NXDOMAIN Ratio"
+                value={`${(nxdomainRatio * 100).toFixed(1)}%`}
+                caption="Failed resolutions"
+                intent={alertFlags.nxdomain ? "warn" : "neutral"}
+              />
+            </KPIGrid>
+          </KPIGroup>
 
-      {/* Risk KPIs */}
-      <div className="kpi-group" style={{ marginBottom: "1.5rem" }}>
-        <KPIGrid ariaLabel="Risk KPIs">
-          <KPICard
-            label="High-entropy Queries"
-            value={highEntropyQueryCount.toLocaleString()}
-            caption={`Share: ${(highEntropyQueryRatio * 100).toFixed(1)}%`}
-            intent={alertFlags.high_entropy ? "alert" : "neutral"}
-          />
-          <KPICard
-            label="Max QNAME Entropy"
-            value={maxQNameEntropy.toFixed(2)}
-            text={maxEntropyQName}
-          />
-          <KPICard
-            label="NXDOMAIN Ratio"
-            value={`${(nxdomainRatio * 100).toFixed(1)}%`}
-            caption="Failed resolutions"
-            intent={alertFlags.nxdomain ? "warn" : "neutral"}
-          />
-        </KPIGrid>
-      </div>
-    </>
-  )}
-</DashboardSection>
+          <KPIGroup title="Traffic Metadata">
+            <KPIGrid ariaLabel="Context KPIs">
+              <KPICard
+                label="Total queries"
+                value={totalQueries.toLocaleString()}
+                caption="Requests observed in the selected window"
+              />
+              <KPICard
+                label="Unique QNAMEs"
+                value={uniqueQnames.toLocaleString()}
+                caption="Distinct queried names"
+              />
+              <KPICard
+                label="Unique Root Domains"
+                value={uniqueRootDomains.toLocaleString()}
+                caption="Distinct eTLD+1 roots"
+              />
+              <KPICard
+                label="Unique Source IPs"
+                value={uniqueSrcIps.toLocaleString()}
+                caption="Clients generating queries"
+              />
+            </KPIGrid>
+          </KPIGroup>
+        </>
+      )}
+    </DashboardSection>
 
+    <DashboardSection title="Distributions">
+      <DashboardGrid columns={3}>
+        <DashboardCard title="QName Entropy" span={2}>
+          {loading ? <div className="skeleton" /> : <QnameEntropyHistogram data={qnameEntropyHistogram} />}
+        </DashboardCard>
+        <DashboardCard title="Subdomain Entropy">
+          {loading ? <div className="skeleton" /> : <SubdomainEntropyHistogram data={subdomainEntropyHistogram} />}
+        </DashboardCard>
+      </DashboardGrid>
+    </DashboardSection>
 
+    <DashboardSection title="Top‑N">
+      <DashboardGrid columns={3}>
+        <DashboardCard title="Top QNAMEs">{loading ? <div className="skeleton" /> : <TopQnamesChart data={topQnames} />}</DashboardCard>
+        <DashboardCard title="Top Root Domains">{loading ? <div className="skeleton" /> : <TopDomainsChart data={topRootDomains} />}</DashboardCard>
+        <DashboardCard title="High‑Entropy QNAMEs">{loading ? <div className="skeleton" /> : <HighEntropyQnamesChart data={highEntropyQnamesTopN} />}</DashboardCard>
+      </DashboardGrid>
+    </DashboardSection>
 
-      <DashboardSection title="Distributions">
-        <DashboardGrid columns={3}>
-          <DashboardCard title="QName Entropy" span={2}>
-            {loading ? <div className="skeleton" /> : <QnameEntropyHistogram data={qnameEntropyHistogram} />}
-          </DashboardCard>
-          <DashboardCard title="Subdomain Entropy">
-            {loading ? <div className="skeleton" /> : <SubdomainEntropyHistogram data={subdomainEntropyHistogram} />}
-          </DashboardCard>
-        </DashboardGrid>
-      </DashboardSection>
-
-      <DashboardSection title="Top‑N">
-        <DashboardGrid columns={3}>
-          <DashboardCard title="Top QNAMEs">{loading ? <div className="skeleton" /> : <TopQnamesChart data={topQnames} />}</DashboardCard>
-          <DashboardCard title="Top Root Domains">{loading ? <div className="skeleton" /> : <TopDomainsChart data={topRootDomains} />}</DashboardCard>
-          <DashboardCard title="High‑Entropy QNAMEs">{loading ? <div className="skeleton" /> : <HighEntropyQnamesChart data={highEntropyQnamesTopN} />}</DashboardCard>
-        </DashboardGrid>
-      </DashboardSection>
-
-      <DashboardSection title="Breakdowns">
-        <DashboardGrid columns={2}>
-          <DashboardCard title="RCODE Breakdown">{loading ? <div className="skeleton" /> : <RcodeBreakdownChart data={rcodeBreakdown} />}</DashboardCard>
-          <DashboardCard title="Query Type Breakdown">{loading ? <div className="skeleton" /> : <QtypeBreakdownChart data={qtypeBreakdown} />}</DashboardCard>
-        </DashboardGrid>
-      </DashboardSection>
-    </div>
+    <DashboardSection title="Breakdowns">
+      <DashboardGrid columns={2}>
+        <DashboardCard title="RCODE Breakdown">{loading ? <div className="skeleton" /> : <RcodeBreakdownChart data={rcodeBreakdown} />}</DashboardCard>
+        <DashboardCard title="Query Type Breakdown">{loading ? <div className="skeleton" /> : <QtypeBreakdownChart data={qtypeBreakdown} />}</DashboardCard>
+      </DashboardGrid>
+    </DashboardSection>
+  </div>
   );
 }
