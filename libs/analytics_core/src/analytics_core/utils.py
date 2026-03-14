@@ -2,6 +2,8 @@ from pyspark.sql import SparkSession
 import os
 import glob
 
+import logging
+
 def create_spark_session(app_name="__name__", aws_profile=None, packages=None, jars=None):
     try:
         spark.stop()
@@ -42,3 +44,18 @@ def create_spark_session(app_name="__name__", aws_profile=None, packages=None, j
     spark = builder.getOrCreate()
     spark.sparkContext.setLogLevel("FATAL")
     return spark
+
+
+def get_logger(name: str = "dns_analytics", level: int = logging.INFO) -> logging.Logger:
+
+    logger = logging.getLogger(name)
+
+    if not logger.handlers:  # Avoid duplicate handlers in notebooks
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter("[%(levelname)s] %(message)s")
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+
+    logger.setLevel(level)
+    logger.propagate = False
+    return logger

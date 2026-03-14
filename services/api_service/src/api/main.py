@@ -3,9 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
 
-from api.config.app_config import AppConfig
-from api.config.template_registry import QueryRegistry
-from api.db.athena import AthenaExecutor
+# from api.config.app_config import AppConfig
+# from api.config.template_registry import QueryRegistry
+# from api.db.athena import AthenaExecutor
 # from api.routers.v1.routes import router as analytics_router
 from api.routers.v2.routes import router as analytics_router
 
@@ -18,6 +18,7 @@ def create_app() -> FastAPI:
     # ---------------------------------------------------
     # 1) Load app_config.json from S3
     # ---------------------------------------------------
+    """
     config_bucket = os.getenv("APP_CONFIG_BUCKET")
     if not config_bucket:
         raise RuntimeError("Missing CONFIG_BUCKET in environment variables (.env)")
@@ -39,7 +40,7 @@ def create_app() -> FastAPI:
     # (optional) Debug print
     # ---------------------------------------------------
     print(f"Loaded {len(app.state.registry.templates.registry)} SQL templates")
-    # print("AppConfig loaded:", config.model_dump())
+    # print("AppConfig loaded:", config.model_dump()) """
 
     # ---------------------------------------------------
     # 4) Add CORS (React frontend needs this)
@@ -55,7 +56,7 @@ def create_app() -> FastAPI:
     # 5) Mount routes
     # ---------------------------------------------------
     #app.include_router(analytics_router, prefix="/v1/tenants")
-    app.include_router(analytics_router, prefix="/v2")
+    app.include_router(analytics_router)
 
     return app
 

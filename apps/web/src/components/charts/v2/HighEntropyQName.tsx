@@ -1,10 +1,10 @@
 // src/components/charts/HighEntropyQnamesChart.tsx
 import Plot from "react-plotly.js";
 //import { interpolateRed } from "../../../styles/colorScale";
-import type { HighEntropyQName } from "../../../types";
+import type { TopNEntry } from "../../../types";
 
 type Props = {
-  data: HighEntropyQName[];
+  data: TopNEntry[];
 };
 
 export function HighEntropyQnamesChart({ data }: Props) {
@@ -14,7 +14,7 @@ export function HighEntropyQnamesChart({ data }: Props) {
 
   // --- Normalize undefined values ---
   const normalized = data.map(d => ({
-    qname: d.qname ?? "Unknown",
+    qname: d.name ?? "Unknown",
     query_count: d.query_count ?? 0,
     entropy: d.entropy ?? 0,
   }));

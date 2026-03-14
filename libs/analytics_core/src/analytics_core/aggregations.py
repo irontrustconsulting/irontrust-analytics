@@ -123,7 +123,7 @@ def build_entropy_histograms(q):
     subdomain_hist = build_histogram_from_binned(
         df_events=q,
         bin_col="subdomain_entropy_bin",
-        exclude_filter=~F.col("is_apex_v1"),
+        exclude_filter=~F.col("is_apex"),
         out_col_name="subdomain_entropy_histogram"
     )
     return qname_hist, subdomain_hist

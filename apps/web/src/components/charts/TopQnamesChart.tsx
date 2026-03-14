@@ -1,10 +1,10 @@
 // src/components/charts/TopQnamesChart.tsx
 import Plot from "react-plotly.js";
 import { interpolateBlue } from "../../utils/colorScale";
-import type { TopQName } from "../../types";
+import type { TopNItem } from "../../types";
 
 type Props = {
-  data: TopQName[];
+  data: TopNItem[];
 };
 
 export function TopQnamesChart({ data }: Props) {
@@ -12,7 +12,7 @@ export function TopQnamesChart({ data }: Props) {
 
   // --- Normalize undefined values ---
   const normalized = data.map(d => ({
-    qname: d.qname ?? "Unknown",
+    qname: d.name ?? "Unknown",
     query_count: d.query_count ?? 0,
   }));
 

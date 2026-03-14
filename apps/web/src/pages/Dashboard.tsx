@@ -6,7 +6,6 @@ import { TopQnamesChart } from "../components/charts/TopQnamesChart";
 import { SubdomainEntropyHistogram } from "../components/charts/SubdomainEntropyHistogramChart";
 import { DashboardHeader } from "../components/layout/DashboardHeader";
 import { KPIGridSkeleton } from "../components/layout/KPIGridChart";
-import { KPIGrid } from "../components/layout/v2/KPIGrid";
 import { KPICard } from "../components/layout/v2/KPICard";
 import { RcodeBreakdownChart } from "../components/charts/RCodeChart";
 import { QtypeBreakdownChart } from "../components/charts/QtypesChart";
@@ -17,6 +16,7 @@ import { DashboardCard } from "../components/layout/v2/DashboardCard";
 import { DashboardSection } from "../components/layout/v2/DashboardSection";
 import { DashboardGrid } from "../components/layout/v2/DashboardGrid";
 import { KPIGroup } from "../components/layout/v2/KPIGroup";
+import { KPIGrid } from "../components/layout/v2/KPIGrid";
 
 
 import "../components/layout/v2/dashboard.css";
@@ -41,34 +41,34 @@ export default function AnalyticsDashboard({ tenantId, eventDate }: Props) {
   if (!data && !loading) return <div>No analytics available.</div>;
 
   // --- normalize optional numbers ---
-  const totalQueries = data?.total_queries ?? 0;
-  const uniqueQnames = data?.unique_qnames ?? 0;
-  const uniqueRootDomains = data?.unique_root_domains ?? 0;
-  const uniqueSrcIps = data?.unique_src_ips ?? 0;
+  const totalQueries = data?.base_kpis?.total_queries ?? 0;
+  const uniqueQnames = data?.base_kpis?.unique_queries ?? 0;
+  const uniqueRootDomains = data?.base_kpis?.unique_root_domains ?? 0;
+  const uniqueSrcIps = data?.base_kpis?.unique_src_ips ?? 0;
 
-  const highEntropyQueryCount = data?.high_entropy_query_count ?? 0;
-  const highEntropyQueryRatio = data?.high_entropy_query_ratio ?? 0;
-  const maxQNameEntropy = data?.max_qname_entropy ?? 0;
-  const maxEntropyQName = data?.max_entropy_qname ?? "";
-  const nxdomainRatio = data?.nxdomain_ratio ?? 0;
+  const highEntropyQueryCount = data?.risk_kpis?.high_entropy_query_count ?? 0;
+  const highEntropyQueryRatio = data?.risk_kpis?.high_entropy_query_ratio ?? 0;
+  const maxQNameEntropy = data?.risk_kpis?.max_qname_entropy ?? 0;
+  const maxEntropyQName = data?.base_kpis?.max_entropy_qname ?? "";
+  const nxdomainRatio = data?.risk_kpis?.nxdomain_ratio ?? 0;
 
   const alertFlags = {
-    high_entropy: data?.alert_high_entropy ?? false,
-    nxdomain: data?.alert_nxdomain ?? false,
+    high_entropy: false, // TODO: implement alerts
+    nxdomain: false,
   };
 
   // --- normalize optional arrays ---
-  const qnameEntropyHistogram = data?.qname_entropy_histogram ?? [];
-  const subdomainEntropyHistogram = data?.subdomain_entropy_histogram ?? [];
-  const topQnames = data?.top_qnames ?? [];
-  const topRootDomains = data?.top_root_domains ?? [];
-  const highEntropyQnamesTopN = data?.high_entropy_qnames_topN ?? [];
-  const rcodeBreakdown = data?.rcode_breakdown ?? [];
-  const qtypeBreakdown = data?.qtype_breakdown ?? [];
+  const qnameEntropyHistogram = data?.histograms?.find(h => h.entropy_type === "qname")?.histogram ?? [];
+  const subdomainEntropyHistogram = data?.histograms?.find(h => h.entropy_type === "subdomain")?.histogram ?? [];
+  const topQnames = data?.rankings?.find(r => r.topN_type === "top_qnames")?.topN ?? [];
+  const topRootDomains = data?.rankings?.find(r => r.topN_type === "top_root_domains")?.topN ?? [];
+  const highEntropyQnamesTopN = data?.rankings?.find(r => r.topN_type === "high_entropy")?.topN ?? [];
+  const rcodeBreakdown = data?.breakdowns?.find(b => b.breakdown_type === "rcode_breakdown")?.breakdown ?? [];
+  const qtypeBreakdown = data?.breakdowns?.find(b => b.breakdown_type === "qtype_breakdown")?.breakdown ?? [];
 
   return (
     <div className="dashboard-page" style={{ padding: "1.5rem", maxWidth: "1800px", margin: "0 auto" }}>
-      <DashboardHeader tenantId={data?.tenant ?? tenantId} eventDate={data?.event_date ?? eventDate} title="DNS Analytics Dashboard (V1)" />
+      <DashboardHeader tenantId={data?.base_kpis?.tenant ?? tenantId} eventDate={data?.base_kpis?.event_date ?? eventDate} title="DNS Analytics Dashboard (V1)" />
 
       <DashboardSection title="Overview">
       {loading ? (

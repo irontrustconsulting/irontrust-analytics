@@ -1,22 +1,22 @@
 // src/hooks/useAnalytics.ts
 import { useEffect, useState } from "react";
-import type { AnalyticsResponse } from "../types";
+import type { AnalyticsOutput } from "../types/analytics";
 
-async function fetchAnalytics(url: string, signal?: AbortSignal): Promise<AnalyticsResponse> {
+async function fetchAnalytics(url: string, signal?: AbortSignal): Promise<AnalyticsOutput> {
   const res = await fetch(url, { signal });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const json = await res.json();
 
-  // Use the correct field names
-  if (!json?.tenant || !json?.event_date) {
-    throw new Error("Invalid analytics payload (missing tenant or event_date)");
+  // Validate required fields
+  if (!json?.base_kpis || !json?.risk_kpis) {
+    throw new Error("Invalid analytics payload (missing base_kpis or risk_kpis)");
   }
 
-  return json as AnalyticsResponse;
+  return json as AnalyticsOutput;
 }
 
 export function useAnalytics(url: string) {
-  const [data, setData] = useState<AnalyticsResponse | null>(null);
+  const [data, setData] = useState<AnalyticsOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 

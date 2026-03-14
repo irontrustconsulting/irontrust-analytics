@@ -167,8 +167,8 @@ def add_entropy(df):
     df = (
          df
          .withColumn("subdomain_entropy", shannon_entropy_bits_udf_v1(F.col("subdomain")))
-         .withColumn("is_apex_v1", F.col("subdomain").isNull() | (F.col("subdomain") == ""))
-         .withColumn("has_invalid_chars_v1", has_invalid_chars_udf_v1(F.col("qname")))
+         .withColumn("is_apex", F.col("subdomain").isNull() | (F.col("subdomain") == ""))
+         .withColumn("has_invalid_chars", (has_invalid_chars_udf_v1(F.col("qname"))).cast("int"))
     )
     df = df.withColumn("subdomain_entropy_norm", shannon_entropy_norm_udf_v1(F.col("subdomain")))
     

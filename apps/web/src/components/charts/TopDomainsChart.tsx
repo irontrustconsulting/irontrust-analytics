@@ -1,13 +1,13 @@
 import Plot from "react-plotly.js";
-import type { TopRootDomain } from "../../types";
+import type { TopNItem } from "../../types";
 
 type Props = {
-  data: TopRootDomain[];
+  data: TopNItem[];
 };
 
 export function TopDomainsChart({ data }: Props) {
   const normalized = data.map(row => ({
-    root_domain: row.root_domain ?? "Unknown",
+    root_domain: row.name ?? "Unknown",
     query_count: row.query_count ?? 0,
   }));
 

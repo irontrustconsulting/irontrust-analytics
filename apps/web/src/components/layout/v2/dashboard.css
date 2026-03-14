@@ -167,11 +167,11 @@ body {
 
 /* Intent colors */
 .kpi-neutral {
-  border-left: 3px solid transparent; /* blue for neutral/informational */
+  border-left: 4px solid #1f77b4; /* blue for neutral/informational */
 }
 
 .kpi-alert {
-  border-left: 3px solid #ef4444; /* red for alerts */
+  border-left: 4px solid #ef4444; /* red for alerts */
 }
 
 .kpi-warn {
