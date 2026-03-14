@@ -1,110 +1,109 @@
-# api/models.py
-from pydantic import BaseModel
-from typing import List, Dict
-'''                                                                              
-root
- |-- total_queries: long (nullable = true)
- |-- unique_qnames: long (nullable = true)
- |-- unique_root_domains: long (nullable = true)
- |-- unique_subdomains: long (nullable = true)
- |-- unique_src_ips: long (nullable = true)
- |-- avg_qname_entropy: double (nullable = true)
- |-- max_qname_entropy: double (nullable = true)
- |-- avg_subdomain_entropy: double (nullable = true)
- |-- max_subdomain_entropy: double (nullable = true)
- |-- avg_subdomain_count: double (nullable = true)
- |-- max_subdomain_count: integer (nullable = true)
- |-- top_qnames: array (nullable = true)
- |    |-- element: struct (containsNull = true)
- |    |    |-- qname: string (nullable = true)
- |    |    |-- query_count: long (nullable = true)
- |-- rcode_breakdown: array (nullable = true)
- |    |-- element: struct (containsNull = true)
- |    |    |-- rcode: integer (nullable = true)
- |    |    |-- count: long (nullable = true)
- |-- qtype_breakdown: array (nullable = true)
- |    |-- element: struct (containsNull = true)
- |    |    |-- qtype: integer (nullable = true)
- |    |    |-- count: long (nullable = true)
- |-- qname_entropy_histogram: array (nullable = true)
- |    |-- element: struct (containsNull = true)
- |    |    |-- bin: string (nullable = true)
- |    |    |-- count: long (nullable = true)
- |-- subdomain_entropy_histogram: array (nullable = true)
- |    |-- element: struct (containsNull = true)
- |    |    |-- bin: string (nullable = true)
- |    |    |-- count: long (nullable = true)
- |-- top_root_domains: array (nullable = true)
- |    |-- element: struct (containsNull = true)
- |    |    |-- root_domain: string (nullable = true)
- |    |    |-- query_count: long (nullable = true)
- |    |    |-- rank: integer (nullable = true)
- |-- high_entropy_query_count: long (nullable = true)
- |-- high_entropy_query_ratio: double (nullable = true)
- |-- max_entropy_qname: string (nullable = true)
- |-- high_entropy_qnames_topN: array (nullable = true)
- |    |-- element: struct (containsNull = true)
- |    |    |-- qname: string (nullable = true)
- |    |    |-- entropy: double (nullable = true)
- |    |    |-- query_count: long (nullable = true)
- |-- nxdomain_count: long (nullable = true)
- |-- nxdomain_ratio: double (nullable = true)
- |-- alert_high_entropy: boolean (nullable = true)
- |-- alert_nxdomain: boolean (nullable = true)
- |-- tenant: string (nullable = true)
- |-- event_date: date (nullable = true)
+"""
+Data models for the Analytics pipeline output.
+Uses Pydantic v2 for validation and serialization.
+"""
 
-1
-'''
-
-class TemplateMetaData(BaseModel):
-    id: str
-    name: str
-    description: str
-    version: float
-    category: str
-
-class QueryTemplate(BaseModel):
-    sql: str
-    metadata: TemplateMetaData
-
-class Templates(BaseModel):
-    id: str
-    name: str
-
-class Histogram(BaseModel):
-    bins: List[str]
-    counts: List[int]
+from typing import Literal, Optional
+from pydantic import BaseModel, Field
 
 
-class TopItem(BaseModel):
-    label: str
-    count: int
-
-class AnalyticsResponse(BaseModel):
-    tenant_id: str
-    event_date: str
-
-    totals: Dict[str, int]
-
-    qname_entropy_histogram: Histogram
-    subdomain_entropy_histogram: Histogram
-
-    top_qnames: List[TopItem]
-    top_rcodes: List[TopItem]
-    top_qtypes: List[TopItem]
-
-class TemplateRegistry(BaseModel):
-    registry: list[QueryTemplate]
-
-    def get_template(self, template_id: str) -> QueryTemplate | None:
-        for tpl in self.registry:
-            if tpl.metadata.id == template_id:
-                return tpl
-        return None
-
-    def list_templates(self) -> list[str]:
-        # return [tpl.metadata.name for tpl in self.registry]
-        return [Templates(id=tpl.metadata.id, name=tpl.metadata.name) for tpl in self.registry]
+class HistogramBin(BaseModel):
+    """A single bin in a histogram."""
+    bin: str = Field(..., description="Bin label or range")
+    count: int = Field(..., description="Count of items in this bin")
 
 
+class EntropyHistogram(BaseModel):
+    """Histogram distribution of entropy values."""
+    tenant: str = Field(..., description="Tenant identifier")
+    event_date: str = Field(..., description="Event date in YYYY-MM-DD format")
+    histogram: list[HistogramBin] = Field(..., description="List of histogram bins")
+    entropy_type: Literal["qname", "subdomain"] = Field(..., description="Type of entropy measured")
+
+
+class BaseKPIs(BaseModel):
+    """Base KPIs computed from DNS query analytics."""
+    tenant: str = Field(..., description="Tenant identifier")
+    event_date: str = Field(..., description="Event date in YYYY-MM-DD format")
+    total_queries: int = Field(..., description="Total number of DNS queries")
+    unique_queries: int = Field(..., description="Count of unique DNS queries")
+    unique_root_domains: int = Field(..., description="Count of unique root domains")
+    unique_subdomains: int = Field(..., description="Count of unique subdomains")
+    unique_src_ips: int = Field(..., description="Count of unique source IPs")
+    avg_qname_entropy: float = Field(..., description="Average entropy of query names")
+    max_qname_entropy: float = Field(..., description="Maximum entropy of query names")
+    avg_subdomain_entropy: float = Field(..., description="Average entropy of subdomains")
+    max_subdomain_entropy: float = Field(..., description="Maximum entropy of subdomains")
+    avg_subdomain_count: float = Field(..., description="Average number of subdomains per domain")
+    max_subdomain_count: float = Field(..., description="Maximum number of subdomains per domain")
+    max_entropy_qname: Optional[str] = Field(default=None, description="Query name with maximum entropy")
+
+
+class RiskKPIs(BaseModel):
+    """Risk-related KPIs computed from DNS query analytics."""
+    tenant: str = Field(..., description="Tenant identifier")
+    event_date: str = Field(..., description="Event date in YYYY-MM-DD format")
+    high_entropy_query_count: int = Field(..., description="Count of high-entropy queries")
+    high_entropy_query_ratio: float = Field(..., description="Ratio of high-entropy queries to total queries")
+    apex_count: int = Field(..., description="Count of apex domain queries")
+    invalid_char_count: int = Field(..., description="Count of queries with invalid characters")
+    nxdomain_count: int = Field(..., description="Count of NXDOMAIN responses")
+    avg_query_length: float = Field(..., description="Average length of query names")
+    max_query_length: int = Field(..., description="Maximum length of query names")
+    long_query_count: int = Field(..., description="Count of unusually long queries")
+    max_qname_entropy: float = Field(..., description="Maximum entropy of query names")
+    total_count: int = Field(..., description="Total count of queries analyzed")
+    apex_ratio: float = Field(..., description="Ratio of apex queries to total queries")
+    invalid_char_ratio: float = Field(..., description="Ratio of invalid character queries to total")
+    nxdomain_ratio: float = Field(..., description="Ratio of NXDOMAIN responses to total")
+    unique_query_ratio: float = Field(..., description="Ratio of unique queries to total queries")
+    long_query_ratio: float = Field(..., description="Ratio of long queries to total queries")
+    
+    # Intent fields (8 fields with alert/warn/neutral values)
+    high_entropy_query_ratio_intent: Literal["alert", "warn", "neutral"] = Field(..., description="Intent classification for high entropy query ratio")
+    max_qname_entropy_intent: Literal["alert", "warn", "neutral"] = Field(..., description="Intent classification for max qname entropy")
+    nxdomain_ratio_intent: Literal["alert", "warn", "neutral"] = Field(..., description="Intent classification for NXDOMAIN ratio")
+    unique_query_ratio_intent: Literal["alert", "warn", "neutral"] = Field(..., description="Intent classification for unique query ratio")
+    long_query_ratio_intent: Literal["alert", "warn", "neutral"] = Field(..., description="Intent classification for long query ratio")
+    invalid_char_ratio_intent: Literal["alert", "warn", "neutral"] = Field(..., description="Intent classification for invalid character ratio")
+    apex_ratio_intent: Literal["alert", "warn", "neutral"] = Field(..., description="Intent classification for apex ratio")
+    avg_query_length_intent: Literal["alert", "warn", "neutral"] = Field(..., description="Intent classification for average query length")
+
+
+class TopNEntry(BaseModel):
+    """A single entry in a top-N ranking."""
+    rank: int = Field(..., description="Rank position (1-based)")
+    name: str = Field(..., description="Name of the entry (query, domain, etc.)")
+    query_count: int = Field(..., description="Number of queries for this entry")
+    entropy: Optional[float] = Field(default=None, description="Entropy value if applicable")
+
+
+class TopNRankings(BaseModel):
+    """Top-N rankings of entities by frequency or entropy."""
+    tenant: str = Field(..., description="Tenant identifier")
+    event_date: str = Field(..., description="Event date in YYYY-MM-DD format")
+    topN: list[TopNEntry] = Field(..., description="List of top-N entries")
+    topN_type: Literal["top_qnames", "top_root_domains", "high_entropy"] = Field(..., description="Type of top-N ranking")
+
+
+class BreakdownEntry(BaseModel):
+    """A single entry in a breakdown by code or type."""
+    code: int = Field(..., description="Code value (e.g., response code, query type)")
+    count: int = Field(..., description="Count of items with this code")
+
+
+class Breakdown(BaseModel):
+    """Breakdown of queries by response code or query type."""
+    tenant: str = Field(..., description="Tenant identifier")
+    event_date: str = Field(..., description="Event date in YYYY-MM-DD format")
+    breakdown: list[BreakdownEntry] = Field(..., description="List of breakdown entries")
+    breakdown_type: Literal["rcode_breakdown", "qtype_breakdown"] = Field(..., description="Type of breakdown")
+
+
+class AnalyticsOutput(BaseModel):
+    """Complete analytics output containing all data types."""
+    base_kpis: BaseKPIs = Field(..., description="Base KPIs")
+    risk_kpis: RiskKPIs = Field(..., description="Risk KPIs")
+    histograms: list[EntropyHistogram] = Field(..., description="Entropy histograms")
+    rankings: list[TopNRankings] = Field(..., description="Top-N rankings")
+    breakdowns: list[Breakdown] = Field(..., description="Breakdowns by code/type")
